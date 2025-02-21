@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spy Pico - Equipos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            display: flex;
+            width: 80%;
+            background: white;
+            padding: 20px;
+            margin-top: 30px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        .left-side {
+            width: 30%;
+            padding-right: 20px;
+            text-align: center;
+        }
+        .right-side {
+            width: 70%;
+            padding-left: 20px;
+            border-left: 2px solid #ccc;
+        }
+        .logo {
+            width: 150px;
+            margin-bottom: 10px;
+        }
+        .maquinas-list {
+            list-style: none;
+            padding: 0;
+        }
+        .maquinas-list li {
+            background: #ddd;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .maquinas-list li a {
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Columna izquierda (Datos generales + logo) -->
+        <div class="left-side">
+           <h1>Spy pico</h1>
+		 <img src="https://i.postimg.cc/WtLtX8r8/asdasda-removebg-preview.png" alt="Logo" class="logo">
+            <h2>Equipos</h2>
+            <ul class="maquinas-list">
+                {% for maquina in maquinas %}
+                    <li><a href="{% url 'consultas' parametro=maquina.nombre %}">{{ maquina.nombre }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <!-- Columna derecha (Información detallada) -->
+        <div class="right-side">
+            <h3>¡Visualiza toda la información de cada equipo!</h3>
+            <p style="color: red;"><b>Recuerda que después de 24 horas la información será borrada.</b></p>
+        </div>
+    </div>
+</body>
+</html>

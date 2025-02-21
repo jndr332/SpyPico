@@ -1,0 +1,71 @@
+
+import re, json
+
+regex_sistema = re.compile(r"^(OS Name|OS Version|System Manufacturer|System Model|Domain|Nombre del sistema operativo|Versión del sistema operativo|Fabricante del sistema|Modelo del sistema|Dominio|whoami):\s*(.*)")
+regex_usuario = re.compile(r"^(.*)\s+(True|False)$")
+regex_redes = re.compile(r"^(.*)\s+(\d{1,3}(\.\d{1,3}){3})$")
+regex_ip_publica = re.compile(r"IP PUBLICA:\s*(.*)")
+regex_wifi = re.compile(r"^(.*) : (.*)$")
+regex_clave = re.compile(r"PASSWORD: (.+)")
+
+data = {
+        "Maquina": {},
+        "Usuarios": {},
+        "Redes": [],
+        "IP_Publica": "",
+        "Redes_WiFi": [],
+        "Clave_Base64": ""
+    }
+
+def regex(file):
+
+    _file = file.splitlines()
+    for line in _file:
+        print(f"Procesando linea: {line}")
+        
+        # Sistema
+        match = regex_sistema.match(line)
+        if match:
+            key, value = match.groups()
+            data["Maquina"][key] = value
+            continue
+
+        # Usuarios
+        match = regex_usuario.match(line)
+        if match:
+            user, state = match.groups()
+            if state == "True":
+                data["Usuarios"][user.strip()] = state
+
+        # IP Pública
+        match = regex_ip_publica.match(line)
+        if match:
+            data["IP_Publica"] = match.group(1)
+            continue
+
+        # Redes
+        match = regex_redes.match(line)
+        if match:
+            interface, ip = match.groups()
+            # Asegurarse de que solo hay dos valores: la interfaz y la IP
+            if len(match.groups()) == 2:
+                print(f"Interfaz encontrada: {interface.strip()} - IP: {ip}")
+                data["Redes"].append({"Interfaz": interface.strip(), "IP": ip})
+            else:
+                print(f"Error: línea no procesada correctamente para redes: {line}")
+            continue
+
+        # Contraseñas WiFi
+        match = regex_wifi.match(line)
+        if match:
+            network, password = match.groups()
+            data["Redes_WiFi"].append({"SSID": network.strip(), "Clave": password.strip()})
+            continue
+
+        match = regex_clave.match(line)
+        if match:
+            data["Clave_Base64"] = match.group(1)
+            continue
+
+
+    return data
